@@ -40,9 +40,6 @@ public class LandingActivity extends AppCompatActivity
             Log.d(TAG, "graphicOverlay is null");
         }
 
-        ToggleButton facingSwitch = findViewById(R.id.camera_switch);
-        facingSwitch.setOnCheckedChangeListener(this);
-
         if (ContextCompat.checkSelfPermission(
                 LandingActivity.this, Manifest.permission.CAMERA) ==
                 PackageManager.PERMISSION_GRANTED) {

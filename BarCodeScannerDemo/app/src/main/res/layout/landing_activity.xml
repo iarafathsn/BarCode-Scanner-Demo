@@ -10,7 +10,6 @@
         android:id="@+id/preview_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/control"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.iarafathsn.barcodescannerdemo.google.mlkit.lib.GraphicOverlay
@@ -22,26 +21,4 @@
         app:layout_constraintRight_toRightOf="@id/preview_view"
         app:layout_constraintTop_toTopOf="@id/preview_view" />
 
-    <LinearLayout
-        android:id="@id/control"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:background="#000"
-        android:orientation="horizontal">
-
-        <ToggleButton
-            android:id="@+id/camera_switch"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:text="@string/cam_switch" />
-
-        <Button
-            android:id="@+id/Gallery_Image"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:text="@string/gallery" />
-    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
