@@ -9,17 +9,14 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.CompoundButton;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.iarafathsn.barcodescannerdemo.google.mlkit.lib.*;
 import com.iarafathsn.barcodescannerdemo.google.mlkit.lib.barcode.BarcodeScannerProcessor;
 
 import java.io.IOException;
 
-public class LandingActivity extends AppCompatActivity
-        implements CompoundButton.OnCheckedChangeListener{
+public class LandingActivity extends AppCompatActivity {
     private static final String TAG = "LandingActivity";
 
     private CameraSource cameraSource = null;
@@ -67,20 +64,6 @@ public class LandingActivity extends AppCompatActivity
     private void startCameraModule() {
         Log.i(TAG, "Starting Camera Module...");
         createCameraSource();
-        startCameraSource();
-    }
-
-    @Override
-    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-        Log.d(TAG, "Set facing");
-        if (cameraSource != null) {
-            if (isChecked) {
-                cameraSource.setFacing(CameraSource.CAMERA_FACING_FRONT);
-            } else {
-                cameraSource.setFacing(CameraSource.CAMERA_FACING_BACK);
-            }
-        }
-        preview.stop();
         startCameraSource();
     }
 
