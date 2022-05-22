@@ -1,5 +1,5 @@
 <resources>
-<string name="app_name">Bar Code Scanner Demo</string>
-<string name="cam_switch">Camera Switch</string>
-<string name="gallery">Gallery</string>
+    <string name="app_name">Bar Code Scanner Demo</string>
+    <string name="cam_switch">Camera Switch</string>
+    <string name="gallery">Gallery</string>
 </resources>

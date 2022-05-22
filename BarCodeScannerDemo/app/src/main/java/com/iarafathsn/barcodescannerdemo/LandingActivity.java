@@ -1,23 +1,29 @@
 package com.iarafathsn.barcodescannerdemo;
 
+import static com.iarafathsn.barcodescannerdemo.util.CommonUtil.ROW_BARCODE;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Lifecycle;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.mlkit.vision.barcode.common.Barcode;
 import com.iarafathsn.barcodescannerdemo.google.mlkit.lib.*;
 import com.iarafathsn.barcodescannerdemo.google.mlkit.lib.barcode.BarcodeScannerProcessor;
+import com.iarafathsn.barcodescannerdemo.util.BarcodeFoundListener;
 
 import java.io.IOException;
 
-public class LandingActivity extends AppCompatActivity {
-    private static final String TAG = "LandingActivity";
+public class LandingActivity extends AppCompatActivity implements BarcodeFoundListener {
+    private static final String TAG = "MainTaskActivity";
 
     private CameraSource cameraSource = null;
     private CameraSourcePreview preview;
@@ -37,6 +43,44 @@ public class LandingActivity extends AppCompatActivity {
             Log.d(TAG, "graphicOverlay is null");
         }
 
+        startWithCameraPermissionCheck();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i(TAG, "Resuming Camera Activity...");
+
+        startWithCameraPermissionCheck();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.i(TAG, "Stopping Camera Activity...");
+
+        preview.stop();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.i(TAG, "Pausing Camera Activity...");
+
+        preview.stop();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.i(TAG, "Releasing Camera Source...");
+
+        if (cameraSource != null) {
+            cameraSource.release();
+        }
+    }
+
+    private void startWithCameraPermissionCheck() {
         if (ContextCompat.checkSelfPermission(
                 LandingActivity.this, Manifest.permission.CAMERA) ==
                 PackageManager.PERMISSION_GRANTED) {
@@ -106,7 +150,9 @@ public class LandingActivity extends AppCompatActivity {
 
         try {
             Log.i(TAG, "Using Barcode Detector Processor");
-            cameraSource.setMachineLearningFrameProcessor(new BarcodeScannerProcessor(this));
+            BarcodeScannerProcessor barcodeScannerProcessor = new BarcodeScannerProcessor(this, this);
+
+            cameraSource.setMachineLearningFrameProcessor(barcodeScannerProcessor);
         } catch (RuntimeException e) {
             Log.e(TAG, "Can not create BarcodeScannerProcessor. Error: " + e);
             Toast.makeText(
@@ -115,5 +161,21 @@ public class LandingActivity extends AppCompatActivity {
                     Toast.LENGTH_LONG)
                     .show();
         }
+    }
+
+    @Override
+    public void onValidBarcodeFound(Barcode barcode) {
+        Lifecycle.State currentState = getLifecycle().getCurrentState();
+
+        Log.i(TAG, "Currently is on " + currentState);
+
+        if (currentState != Lifecycle.State.RESUMED) {
+            Log.i(TAG, "Currently is not on RESUMED...");
+            return;
+        }
+
+        Intent myIntent = new Intent(this, BarCodeResultActivity.class);
+        myIntent.putExtra(ROW_BARCODE, barcode.getRawValue().toString());
+        startActivity(myIntent);
     }
 }

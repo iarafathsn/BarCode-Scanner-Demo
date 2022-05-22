@@ -17,6 +17,7 @@
 package com.iarafathsn.barcodescannerdemo.google.mlkit.lib.barcode;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Point;
 import android.util.Log;
 
@@ -27,9 +28,13 @@ import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
+import com.iarafathsn.barcodescannerdemo.BarCodeResultActivity;
 import com.iarafathsn.barcodescannerdemo.google.mlkit.lib.GraphicOverlay;
 import com.iarafathsn.barcodescannerdemo.google.mlkit.lib.VisionProcessorBase;
+import com.iarafathsn.barcodescannerdemo.util.BarcodeFoundListener;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /** Barcode Detector Demo. */
@@ -38,6 +43,8 @@ public class BarcodeScannerProcessor extends VisionProcessorBase<List<Barcode>> 
     private static final String TAG = "BarcodeProcessor";
 
     private final BarcodeScanner barcodeScanner;
+    private Context mContext = null;
+    private BarcodeFoundListener mBarcodeListener = null;
 
     public BarcodeScannerProcessor(Context context) {
         super(context);
@@ -47,6 +54,21 @@ public class BarcodeScannerProcessor extends VisionProcessorBase<List<Barcode>> 
         //     .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
         //     .build();
         barcodeScanner = BarcodeScanning.getClient();
+
+        this.mContext = context;
+    }
+
+    public BarcodeScannerProcessor(Context context, BarcodeFoundListener barcodeFoundListener) {
+        super(context);
+        // Note that if you know which format of barcode your app is dealing with, detection will be
+        // faster to specify the supported barcode formats one by one, e.g.
+        // new BarcodeScannerOptions.Builder()
+        //     .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
+        //     .build();
+        barcodeScanner = BarcodeScanning.getClient();
+
+        this.mContext = context;
+        mBarcodeListener = barcodeFoundListener;
     }
 
     @Override
@@ -70,8 +92,18 @@ public class BarcodeScannerProcessor extends VisionProcessorBase<List<Barcode>> 
         for (int i = 0; i < barcodes.size(); ++i) {
             Barcode barcode = barcodes.get(i);
             graphicOverlay.add(new BarcodeGraphic(graphicOverlay, barcode));
+
+            if (isValidBarcode(barcode) && mBarcodeListener != null) {
+                mBarcodeListener.onValidBarcodeFound(barcode);
+            }
+
             logExtrasForTesting(barcode);
         }
+    }
+
+    private boolean isValidBarcode(Barcode barcode) {
+        // currently allowing all
+        return true;
     }
 
     private static void logExtrasForTesting(Barcode barcode) {

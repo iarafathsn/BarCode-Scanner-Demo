@@ -1,5 +1,5 @@
 package com.iarafathsn.barcodescannerdemo.util;
 
-public interface CommonUtil {
-    public static final int CAMERA_REQUEST_CODE = 150;
+public class CommonUtil {
+    public static final String ROW_BARCODE = "ROW_BAR_CODE_STRING";
 }
